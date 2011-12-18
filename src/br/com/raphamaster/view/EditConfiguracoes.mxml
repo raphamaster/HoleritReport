@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" styleName="greyBillPayBox" 
+		   verticalScrollPolicy="off" horizontalScrollPolicy="off" creationComplete="init()">
+
+	<mx:Script>
+		<![CDATA[
+			import br.com.raphamaster.utils.DB;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.messaging.messages.ErrorMessage;
+			
+			[Bindable]
+			public var returnObj:Object;
+			
+			private function init():void
+			{
+				//Iniciando conexão com o banco de dados
+				DB.Inicia();
+				
+				returnObj = DB.executeQuery("SELECT * FROM hr_configuracoes").data;
+			}
+			
+			
+			private function addItem():void{
+				var sql:String = "INSERT INTO hr_configuracoes('conf_razao','conf_endereco', 'conf_cidade', 'conf_cnpj') VALUES('"+txtRazao.text+"','"+txtEndereco.text+"', '"+txtCidade.text+"', '"+txtCNPJ.text+"')";
+				
+				try{
+					DB.Inicia();
+					
+					DB.executeQuery(sql);
+					
+					txtRazao.text 		= "";
+					txtEndereco.text 	= "";
+					txtCidade.text 		= "";
+					txtCNPJ.text 		= ""
+					
+					//Atualizando Datagrid
+					init();
+					
+				} catch(e:ErrorMessage) {
+					Alert.show("Erro: "+e.faultString);
+				}
+			}
+			
+			private function updateItem():void
+			{
+				var sql:String = "UPDATE hr_configuracoes SET conf_razao='"+txtRazao.text+"', conf_endereco='"+txtEndereco.text+"', conf_cidade='"+txtCidade.text+"', conf_cnpj='"+txtCNPJ.text+"' WHERE conf_id="+dg.selectedItem.conf_id;				
+				
+				try{
+					DB.Inicia();
+					
+					DB.executeQuery(sql);
+					
+					//Atualizando Datagrid
+					init();
+					
+				} catch(e:ErrorMessage) {
+					Alert.show("Erro: "+e.faultString);
+				}
+			}
+			
+			private function handlerDelete(e:Event):void{
+				Alert.yesLabel = "Sim";
+				Alert.noLabel = "Não";
+				Alert.show("Deseja realmente exluir esta razão ?", "CUIDADO!", 3, this, deleteItem);
+			}
+			
+			private function deleteItem(e:CloseEvent):void
+			{
+				if(e.detail == Alert.YES)
+				{
+					var sql:String = "DELETE FROM hr_configuracoes WHERE conf_id="+dg.selectedItem.conf_id;				
+					
+					try{
+						DB.Inicia();
+						
+						DB.executeQuery(sql);
+						
+						//Atualizando Datagrid
+						init();
+						
+					} catch(e:ErrorMessage) {
+						Alert.show("Erro: "+e.faultString);
+					}
+				}
+			}
+			
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Panel height="386" layout="absolute" top="30" left="10" right="10" title="Cadastro de Razões Sociais">
+		<mx:DataGrid y="10" dataProvider="{returnObj}" id="dg" right="10" left="10">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Cod." dataField="conf_id" width="40"/>
+				<mx:DataGridColumn headerText="Razão" dataField="conf_razao" width="300"/>
+				<mx:DataGridColumn headerText="Endereço" dataField="conf_endereco"/>
+				<mx:DataGridColumn headerText="Cidade" dataField="conf_cidade"/>
+				<mx:DataGridColumn headerText="CNPJ" dataField="conf_cnpj"/>
+			</mx:columns>
+		</mx:DataGrid>
+		
+		<mx:Form x="10" y="160" width="603">
+			<mx:FormItem label="Nome:">
+				<mx:TextInput id="txtRazao"  width="375" text="{dg.selectedItem.conf_razao}"/>
+			</mx:FormItem>
+			<mx:FormItem label="Endereço:">
+				<mx:TextInput id="txtEndereco"  width="375" text="{dg.selectedItem.conf_endereco}"/>
+			</mx:FormItem>
+			<mx:FormItem label="Cidade:">
+				<mx:TextInput id="txtCidade"  width="375" text="{dg.selectedItem.conf_cidade}"/>
+			</mx:FormItem>
+			<mx:FormItem label="CNPJ:">
+				<mx:TextInput id="txtCNPJ"  width="375" text="{dg.selectedItem.conf_cnpj}"/>
+			</mx:FormItem>
+		</mx:Form>
+		
+		<mx:ControlBar>
+			<mx:Button label="Adicionar" click="addItem()" icon="@Embed(source='../../../../assets/icons/add.png')"/>
+			<mx:Button label="Alterar" click="updateItem()" icon="@Embed(source='../../../../assets/icons/application_form_edit.png')"/>
+			<mx:Button label="Excluir" click="handlerDelete(event)" icon="@Embed(source='../../../../assets/icons/delete.png')"/>
+		</mx:ControlBar>
+		
+	</mx:Panel>
+	
+</mx:Canvas>

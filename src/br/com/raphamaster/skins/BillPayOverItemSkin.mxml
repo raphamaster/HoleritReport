@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GraphicBorderSkin  xmlns:mx="http://www.adobe.com/2006/mxml"
+                    xmlns="http://www.degrafa.com/2007">
+
+    <mx:Script>
+        <![CDATA[
+            [Bindable]
+            private var awidth:Number=0;
+
+            [Bindable]
+            private var aheight:Number=0;
+            
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+                awidth = unscaledWidth;
+                aheight = unscaledHeight;
+                }
+        ]]>
+    </mx:Script>
+
+    <fills>
+	    <LinearGradientFill  id="greyOverGradient" angle="90">
+	     	<GradientStop alpha="1" color="#ECECEC"/>
+	     	<GradientStop alpha="1" color="#CCC"/>
+	     </LinearGradientFill>
+    </fills>
+    
+    <strokes>
+    	<SolidStroke id="stroke3" color="#999" weight="1" alpha=".5"/>
+    </strokes>
+    
+    <geometry>
+     
+        	<RoundedRectangleComplex 	
+	    					   		fill="{greyOverGradient}" stroke="{stroke3}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="0" 
+	    							bottomRightRadius="0"
+	    							topLeftRadius="0" 
+	    							topRightRadius="0" /> 
+	    							
+        
+    </geometry>
+     <filters> 
+					    <flash.filters:DropShadowFilter id='dropShadowFilter' xmlns:flash.filters='flash.filters.*' 
+					      angle='180'
+					          blurX='6' blurY='0'
+					          distance='4'
+					          alpha='0.2' color='#CCC' 
+					          knockout='false' quality='1'
+					          strength='1' inner='true' hideObject='false'/>
+					</filters>
+  
+</GraphicBorderSkin>

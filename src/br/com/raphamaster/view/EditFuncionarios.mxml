@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%"
+		   xmlns:rapha="br.com.raphamaster.components.*"
+		   styleName="greyBillPayBox" verticalScrollPolicy="off" horizontalScrollPolicy="off" creationComplete="init()">
+	
+	<mx:Script>
+		<![CDATA[
+			import br.com.raphamaster.utils.DB;
+			import br.com.raphamaster.utils.FormataValores;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.messaging.messages.ErrorMessage;
+			import mx.validators.ValidationResult;
+			
+			import org.idmedia.as3commons.util.AbstractCollection;
+			
+			public var formatter:FormataValores = new FormataValores();
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Variavel que retorna com dados da consulta geral de funcionarios
+			//  e preenche o DataGrid dgFuncionarios
+			//
+			//--------------------------------------------------------------------------
+			[Bindable]
+			public var returnObj:Object;
+			
+			[Bindable]
+			public var returnFuncionario:Object;
+			
+			[Bindable]
+			public var returnFuncionarioData:Object;
+			
+			[Bindable]
+			public var returnFuncionarioRazao:Object;
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Metodo inicial retornando todos os funcionarios cadastrados
+			//
+			//--------------------------------------------------------------------------
+			private function init():void
+			{
+				//Iniciando conexão com o banco de dados
+				DB.Inicia();
+				
+				returnObj = DB.executeQuery("SELECT funcionario_id, funcionario_nome, funcionario_cargo, conf_id FROM hr_funcionarios").data;
+				
+				// Timer da pesquisa para aguardar quando digita
+				time.addEventListener("timer", TimeEnd);
+				// Evento para quando digitar
+				txtPesquisa.addEventListener(Event.CHANGE, changeFiltro)
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Cadastrando novos funcionarios na base de dados
+			//
+			//--------------------------------------------------------------------------
+			private function addItem():void{
+				
+				var nomeValid:ValidationResultEvent = nomeValidator.validate();
+				var cargoValid:ValidationResultEvent = cargoValidator.validate();
+				var rgValid:ValidationResultEvent = rgValidator.validate();
+				var cboValid:ValidationResultEvent = cboValidator.validate();
+				var deptoValid:ValidationResultEvent = deptoValidator.validate();
+				var setorValid:ValidationResultEvent = setorValidator.validate();
+				var secaoValid:ValidationResultEvent = secaoValidator.validate();
+				
+				if(nomeValid.type == ValidationResultEvent.INVALID || cargoValid.type == ValidationResultEvent.INVALID || rgValid.type == ValidationResultEvent.INVALID ||cboValid.type == ValidationResultEvent.INVALID || deptoValid.type == ValidationResultEvent.INVALID || setorValid.type == ValidationResultEvent.INVALID || secaoValid.type == ValidationResultEvent.INVALID)
+				{
+					Alert.show("Preencha todo os campos para efeutar o cadastro!!!", "OPAAAA!!!");
+				} else {
+				
+					var sql:String = "INSERT INTO hr_funcionarios('funcionario_nome','funcionario_cargo', 'funcionario_rg', 'funcionario_cbo', 'funcionario_depto', 'funcionario_setor', 'funcionario_secao', 'conf_id') VALUES('"+txtNome.text+"','"+txtCargo.text+"','"+txtRG.text+"',"+int(txtCBO.text)+","+int(txtDepto.text)+","+int(txtSetor.text)+","+int(txtSecao.text)+","+cbRazao.selectedItem.conf_id+")";
+					
+					try{
+						DB.Inicia();
+						
+						DB.executeQuery(sql);
+						
+						txtNome.text	= '';
+						txtCargo.text	= '';
+						txtRG.text		= '';
+						txtCBO.text		= '';
+						txtDepto.text	= '';
+						txtSetor.text	= '';
+						txtSecao.text	= '';
+						
+						//Atualizando Datagrid
+						init();
+						
+					} catch(e:ErrorMessage) {
+						Alert.show("Erro: "+e.faultString);
+					}
+				}
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Atualizando os dados dos funcionarios na base de dados
+			//
+			//--------------------------------------------------------------------------
+			private function updateItem():void
+			{
+				var sql:String = "UPDATE hr_funcionarios SET funcionario_nome='"+txtNome.text+"', funcionario_cargo='"+txtCargo.text+"', funcionario_rg='"+txtRG.text+"', funcionario_cbo="+int(txtCBO.text)+", funcionario_depto="+int(txtDepto.text)+", funcionario_setor="+int(txtSetor.text)+", funcionario_secao="+int(txtSecao.text)+", conf_id="+cbRazao.selectedItem.conf_id+" WHERE funcionario_id="+dgFuncionarios.selectedItem.funcionario_id;				
+				
+				try{
+					DB.Inicia();
+					
+					DB.executeQuery(sql);
+					
+					//Atualizando Datagrid
+					init();
+					
+					Alert.show('Funcionario alterado com sucesso');
+					
+				} catch(e:ErrorMessage) {
+					Alert.show("Erro: "+e.faultString);
+				}
+			}
+			
+			private function getFuncinario():void
+			{
+				var sql:String = "SELECT * FROM hr_funcionarios WHERE funcionario_id="+dgFuncionarios.selectedItem.funcionario_id;
+				
+				try{
+					DB.Inicia();
+					
+					returnFuncionario = DB.executeQuery(sql).data;
+
+					currentState 	= 'FormFuncionarios';
+					
+					//Debasilitando batao para adicionar novos funcionarios no modo de alteração
+					btnAdicionar.enabled = false;					
+					
+					txtNome.text 	= returnFuncionario[0].funcionario_nome;
+					txtCargo.text 	= returnFuncionario[0].funcionario_cargo;
+					txtRG.text 		= returnFuncionario[0].funcionario_rg;
+					txtCBO.text 	= returnFuncionario[0].funcionario_cbo;
+					txtDepto.text 	= returnFuncionario[0].funcionario_depto;
+					txtSetor.text 	= returnFuncionario[0].funcionario_setor;
+					txtSecao.text 	= returnFuncionario[0].funcionario_secao;
+					
+					
+				} catch(e:ErrorMessage){
+					Alert.show("Erro: "+e.faultString);
+				}
+			}
+			
+			private function handlerDelete(e:Event):void{
+				Alert.yesLabel = "Sim";
+				Alert.noLabel = "Não";
+				Alert.show("Deseja realmente exluir este funcionario ?", "CUIDADO!", 3, this, deleteItem);
+			}
+			
+			private function deleteItem(e:CloseEvent):void
+			{
+				if(e.detail == Alert.YES)
+				{
+					var sql:String = "DELETE FROM hr_funcionarios WHERE funcionario_id="+dgFuncionarios.selectedItem.funcionario_id;				
+					
+					try{
+						DB.Inicia();
+						
+						DB.executeQuery(sql);
+						
+						//Atualizando Datagrid
+						init();
+						
+					} catch(e:ErrorMessage) {
+						Alert.show("Erro: "+e.faultString);
+					}
+				}
+			}
+			
+			private function navState(option:String):void
+			{
+				switch(option)
+				{
+					case 'root':
+						currentState = '';
+						
+						//Limpando campos de formulario
+						txtNome.text 	= '';
+						txtCargo.text 	= '';
+						txtRG.text 		= '';
+						txtCBO.text 	= '';
+						txtDepto.text 	= '';
+						txtSetor.text 	= '';
+						txtSecao.text 	= '';
+						
+						btnAdicionar.enabled = true;
+						btnAlterar.enabled 	 = true;
+					break;
+					case 'add':
+						currentState = 'FormFuncionarios';
+						
+						//Limpando campos de formulario
+						txtNome.text 	= '';
+						txtCargo.text 	= '';
+						txtRG.text 		= '';
+						txtCBO.text 	= '';
+						txtDepto.text 	= '';
+						txtSetor.text 	= '';
+						txtSecao.text 	= '';
+						
+						btnAlterar.enabled = false;
+					break;
+					case 'update':
+						currentState = 'FormFuncionarios';
+						
+						//Limpando campos de formulario
+						txtNome.text 	= '';
+						txtCargo.text 	= '';
+						txtRG.text 		= '';
+						txtCBO.text 	= '';
+						txtDepto.text 	= '';
+						txtSetor.text 	= '';
+						txtSecao.text 	= '';
+						
+						btnAdicionar.enabled = false;
+				}
+				
+			}
+			
+			private function addVencimento():void
+			{
+				if(dgFuncionarios.selectedItem == null)
+				{
+					Alert.show("É necessario selecionar um funcionario");
+				} else {
+				
+					var vencimentoValid:ValidationResultEvent = vencimentoValidator.validate();
+					
+					if(vencimentoValid.type == ValidationResultEvent.INVALID)
+					{
+						Alert.show("Informe o valor do vencimento");
+					} else {
+					
+						try{
+							var sql:String = "INSERT INTO hr_demonstrativo('codigo_id','dem_vencimento', 'funcionario_id') VALUES("+cbVencimentos.selectedItem.codigo_id+",'"+txtValorVencimento.text+"',"+dgFuncionarios.selectedItem.funcionario_id+")";
+							
+							DB.Inicia();
+							
+							DB.executeQuery(sql);
+							
+							txtValorVencimento.text = '';
+						} catch(e:ErrorMessage) {
+							Alert.show("Erro: "+e.faultString);
+						}
+						getItemFuncionarios();
+					}
+				}
+			}
+			
+			private function addDesconto():void
+			{
+				if(dgFuncionarios.selectedItem == null)
+				{
+					Alert.show("É necessario selecionar um funcionario");
+				} else {
+					
+					var descontoValid:ValidationResultEvent = descontoValidator.validate();
+					
+					if(descontoValid.type == ValidationResultEvent.INVALID)
+					{
+						Alert.show("Informe o valor do vencimento");
+					} else {
+					
+						try{
+							var sql:String = "INSERT INTO hr_demonstrativo('codigo_id','dem_desconto', 'funcionario_id') VALUES("+cbDescontos.selectedItem.codigo_id+",'"+txtValorDesconto.text+"',"+dgFuncionarios.selectedItem.funcionario_id+")";
+							
+							DB.Inicia();
+							
+							DB.executeQuery(sql);
+							
+							txtValorDesconto.text = '';
+							
+						} catch(e:ErrorMessage) {
+							Alert.show("Erro: "+e.faultString);
+						}
+						
+						getItemFuncionarios();
+					}
+				}
+				
+			}
+			
+			private function changeItemFuncionarios(e:Event):void
+			{
+				var sql:String = "SELECT * FROM hr_demonstrativo INNER JOIN hr_codigos on hr_demonstrativo.codigo_id=hr_codigos.codigo_id WHERE hr_demonstrativo.funcionario_id="+dgFuncionarios.selectedItem.funcionario_id;
+				
+				try{
+					DB.Inicia();
+					
+					returnFuncionarioData = DB.executeQuery(sql).data;
+					
+					getFuncionarioRazao();
+					
+				} catch(e:ErrorMessage) {
+					Alert.show("Erro: "+e.faultString);
+				}	
+			}
+			
+			private function getFuncionarioRazao():void
+			{
+				var sql:String = "SELECT conf_id, conf_razao FROM hr_configuracoes WHERE conf_id="+dgFuncionarios.selectedItem.conf_id;
+				
+				try{
+					DB.Inicia();
+					
+					returnFuncionarioRazao = DB.executeQuery(sql).data;
+					txtRazao.text = returnFuncionarioRazao[0].conf_razao
+										
+					
+				} catch(e:ErrorMessage) {
+					Alert.show("Erro: "+e.faultString);
+				}
+			}
+			
+			private function getItemFuncionarios():void
+			{
+				var sql:String = "SELECT * FROM hr_demonstrativo INNER JOIN hr_codigos on hr_demonstrativo.codigo_id=hr_codigos.codigo_id WHERE hr_demonstrativo.funcionario_id="+dgFuncionarios.selectedItem.funcionario_id;
+				
+				try{
+					DB.Inicia();
+					
+					returnFuncionarioData = DB.executeQuery(sql).data;
+					
+				} catch(e:ErrorMessage) {
+					Alert.show("Erro: "+e.faultString);
+				}
+			}
+			
+			private function deleteDemonstrativo():void
+			{
+				var sql:String = "DELETE FROM hr_demonstrativo WHERE dem_id="+dgVencimentos.selectedItem.dem_id;				
+				
+				try{
+					DB.Inicia();
+					
+					DB.executeQuery(sql);
+					
+					//Atualizando Datagrid
+					getItemFuncionarios();
+					
+				} catch(e:ErrorMessage) {
+					Alert.show("Erro: "+e.faultString);
+				}
+			}
+			
+			//Métodos para pesquisa dinamica no datagrid
+			
+			private var time:Timer = new Timer(1000, 1);
+			private var returnPesquisa:Object;
+			
+			private function changeFiltro(e:Event):void
+			{
+				// Para o Timer, se já estiver parado, não faz nada
+				time.stop();
+				// Inicia o Timer
+				time.start();
+			}
+			private function TimeEnd(e:TimerEvent):void
+			{
+				// se o evento for executado, chama a função que faz a busca
+				pesquisaFuncionarios();
+			}
+			
+			public function pesquisaFuncionarios():void
+			{
+				var sql:String = "SELECT * FROM  hr_funcionarios WHERE funcionario_nome LIKE '"+txtPesquisa.text+"%'";				
+				
+				try{
+					DB.Inicia();
+					
+					returnPesquisa = DB.executeQuery(sql).data;
+									
+					
+				} catch(e:ErrorMessage) {
+					Alert.show("Erro: "+e.faultString);
+				}
+				
+				dgFuncionarios.dataProvider = returnPesquisa;
+				
+			}
+			private function ResultBusca():void
+			{
+				//dgFuncionarios.dataProvider = returnPesquisa;
+			}
+			
+			private function closeVencimentos():void
+			{
+				currentState = '';
+			}
+			
+			private function openVencimento():void
+			{
+				currentState='FormVencimentos';
+			}
+			
+			
+			//Atualizando Vencimentos/Descontos através das alterações feitas pelo mesmo
+			private function updateVencimentos():void
+			{
+				var vencimento:String 	= dgVencimentos.selectedItem.dem_vencimento;
+				var desconto:String 	= dgVencimentos.selectedItem.dem_desconto; 
+								
+				var sql:String = "UPDATE hr_demonstrativo SET dem_vencimento='"+vencimento+"', dem_desconto='"+desconto+"' WHERE dem_id="+dgVencimentos.selectedItem.dem_id;				
+				
+				try{
+					DB.Inicia();
+					
+					DB.executeQuery(sql);					
+					
+				} catch(e:ErrorMessage) {
+					Alert.show("Erro: "+e.faultString);
+				}
+			}
+								
+		]]>
+	</mx:Script>
+			
+	<mx:StringValidator id="nomeValidator" source="{txtNome}" property="text" requiredFieldError="Preencha o campo" />
+	<mx:StringValidator id="cargoValidator" source="{txtCargo}" property="text" requiredFieldError="Preencha o campo" />
+	<mx:StringValidator id="rgValidator" source="{txtRG}" property="text" requiredFieldError="Preencha o campo" />
+	<mx:StringValidator id="cboValidator" source="{txtCBO}" property="text" requiredFieldError="Preencha o campo" />
+	<mx:StringValidator id="deptoValidator" source="{txtDepto}" property="text" requiredFieldError="Preencha o campo" />
+	<mx:StringValidator id="setorValidator" source="{txtSetor}" property="text" requiredFieldError="Preencha o campo" />
+	<mx:StringValidator id="secaoValidator" source="{txtSecao}" property="text" requiredFieldError="Preencha o campo" />
+	
+	<mx:StringValidator id="vencimentoValidator" source="{txtValorVencimento}" property="text" requiredFieldError="Preencha o campo" />
+	<mx:StringValidator id="descontoValidator" source="{txtValorDesconto}" property="text" requiredFieldError="Preencha o campo" />
+	
+	<mx:states>
+		<mx:State name="FormFuncionarios">
+			<mx:SetProperty target="{panel2}" name="height" value="377"/>
+			<mx:AddChild relativeTo="{controlbar1}" position="before">
+				<mx:Label x="10" y="10" text="Adicionar Funcionario:"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{controlbar1}" position="before">
+				<mx:Form x="10" y="36">
+					<mx:FormItem label="Razão Social">
+						<rapha:Razao  id="cbRazao"/>
+					</mx:FormItem>
+					<mx:FormItem label="Nome:">
+						<mx:TextInput id="txtNome" width="400" />
+					</mx:FormItem>
+					<mx:FormItem label="Cargo:">
+						<mx:TextInput id="txtCargo" width="400" />
+					</mx:FormItem>
+					<mx:FormItem label="RG:">
+						<mx:TextInput id="txtRG" width="200" />
+					</mx:FormItem>
+					<mx:FormItem label="CBO:">
+						<mx:TextInput id="txtCBO" width="100" />
+					</mx:FormItem>
+					<mx:FormItem label="Dpto:">
+						<mx:TextInput id="txtDepto" width="50" />
+					</mx:FormItem>
+					<mx:FormItem label="Setor:">
+						<mx:TextInput id="txtSetor" width="50" />
+					</mx:FormItem>
+					<mx:FormItem label="Seção:">
+						<mx:TextInput id="txtSecao" width="50" />
+					</mx:FormItem>
+				</mx:Form>
+			</mx:AddChild>
+			<mx:RemoveChild target="{dgFuncionarios}"/>
+			<mx:RemoveChild target="{btnExcluir}"/>
+			<mx:AddChild relativeTo="{btnAdicionar}" position="before">
+				<mx:Button label="Voltar" id="btnVoltar" click="navState('root')" icon="@Embed(source='../../../../assets/icons/arrow_turn_left.png')"/>
+			</mx:AddChild>
+			<mx:SetEventHandler target="{btnAdicionar}" name="click" handler="addItem()"/>
+			<mx:SetEventHandler target="{btnAlterar}" name="click" handler="updateItem()"/>
+			<mx:RemoveChild target="{btnVencimentos}"/>
+			<mx:SetProperty target="{panel2}" name="y" value="79"/>
+			<mx:RemoveChild target="{panel1}"/>
+			<mx:RemoveChild target="{applicationcontrolbar1}"/>
+			<mx:SetStyle target="{btnAlterar}" name="icon" value="@Embed(source='../../../../assets/icons/disk.png')"/>
+		</mx:State>
+		
+		<mx:State name="FormVencimentos">
+			<mx:AddChild relativeTo="{controlbar1}" position="before">
+				<mx:Image x="538" y="74" source="@Embed('assets/icons/Gnome-Go-Next-32.png')"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{controlbar1}" position="before">
+				<mx:Image source="@Embed('assets/icons/Gnome-Process-Stop-32.png')" click="closeVencimentos()" right="10" top="10"/>
+			</mx:AddChild>
+			<mx:SetStyle target="{panel1}" name="left" value="9"/>
+			<mx:SetStyle target="{panel1}" name="right" value="11"/>
+			<mx:AddChild relativeTo="{controlbar1}" position="before">
+				<mx:Accordion x="578" y="9.1" width="300" height="178.9" id="acVencimentos">
+					<mx:Canvas label="Vencimentos" height="100%" width="100%" id="cvVencimentos">
+						<mx:Form>
+							<mx:FormItem label="Descrição:" id="formitem1">
+								<rapha:Vencimentos id="cbVencimentos"/>
+							</mx:FormItem>
+							
+							<mx:FormItem label="Valor (R$)">
+								<mx:TextInput id="txtValorVencimento" />
+							</mx:FormItem>
+							
+							<mx:FormItem>
+								<mx:Button label="Adicionar Vencimento"  click="addVencimento()" icon="@Embed(source='../../../../assets/icons/add.png')"/>
+							</mx:FormItem>
+						</mx:Form>
+					</mx:Canvas>
+					
+					<mx:Canvas label="Descontos">
+						<mx:Form width="100%" height="100%">
+						<mx:FormItem label="Descrição:">
+							<rapha:Descontos id="cbDescontos"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Valor (R$)">
+							<mx:TextInput id="txtValorDesconto" />
+						</mx:FormItem>
+						
+						<mx:FormItem>
+							<mx:Button label="Adicionar Desconto"  click="addDesconto()" icon="@Embed(source='../../../../assets/icons/add.png')"/>
+						</mx:FormItem>
+							</mx:Form>
+					</mx:Canvas>
+				</mx:Accordion>
+			</mx:AddChild>
+			<mx:SetEventHandler target="{btnVencimentos}" name="click" handler="openVencimento()"/>
+		</mx:State>
+		
+	</mx:states>
+
+	<mx:Canvas id="paymentPopup" backgroundColor="0x000000" verticalCenter="-100" horizontalCenter="0" styleName="setUpPaymentPopup" showEffect="Fade" hideEffect="Fade" visible="false" mouseChildren="false">
+		<mx:Label id="popUpText" text="Payment is setup" styleName="whiteText" fontSize="40" paddingLeft="30" paddingTop="30" paddingRight="30" paddingBottom="30"/>
+	</mx:Canvas>
+	
+	<mx:ApplicationControlBar height="56" left="10" right="10" top="10" id="applicationcontrolbar1">
+		<mx:Label text="Pesquisa:"/>
+		<mx:TextInput width="368" id="txtPesquisa"/>
+	</mx:ApplicationControlBar>
+	
+	<mx:Panel layout="absolute" left="10" right="10" top="356" title="Recibo de Pagamento" height="280" id="panel1">
+		<mx:Label x="10" y="10" text="Razão Social:"/>
+		<mx:DataGrid y="36" left="10" right="10" id="dgVencimentos" dataProvider="{returnFuncionarioData}" editable="true" 
+					 itemFocusOut="updateVencimentos()" height="130">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Cód." 		dataField="codigo_id" width="40" editable="false"/>
+				<mx:DataGridColumn headerText="Descrição" 	dataField="codigo_desc" width="100" editable="false"/>
+				<mx:DataGridColumn headerText="Ref."	 	dataField="codigo_ref" width="40" editable="false"/>
+				<mx:DataGridColumn headerText="Vencimentos" dataField="dem_vencimento" width="80" editable="true"/>
+				<mx:DataGridColumn headerText="Descontos" 	dataField="dem_desconto" width="80" editable="true"/>
+				<mx:DataGridColumn headerText="Cod." 		dataField="dem_id" visible="false" editable="false"/>
+			</mx:columns>
+		</mx:DataGrid>
+		<mx:Text x="99" y="10" width="400" id="txtRazao" fontWeight="bold"/>
+		
+		<mx:ControlBar>
+			<mx:Button label="Excluir" click="deleteDemonstrativo()" icon="@Embed(source='../../../../assets/icons/delete.png')"/>
+		</mx:ControlBar>
+		
+	</mx:Panel>
+	
+	<mx:Panel y="74" height="274.01514" layout="absolute" title="Cadastro de Funcionarios" left="10" right="10.030273" id="panel2">
+		<mx:DataGrid height="178.93939" width="520" x="10" y="10" id="dgFuncionarios" dataProvider="{returnObj}" change="changeItemFuncionarios(event)">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Cod." 	dataField="funcionario_id" 		width="50"/>
+				<mx:DataGridColumn headerText="Nome" 	dataField="funcionario_nome" 	width="400"/>
+				<mx:DataGridColumn headerText="Cargo" 	dataField="funcionario_cargo" 	width="300"/>
+				<mx:DataGridColumn headerText="Razao" 	dataField="conf_id" 			visible="false"/>
+			</mx:columns>
+		</mx:DataGrid>
+		<mx:ControlBar id="controlbar1">
+			<mx:Button label="Adicionar" id="btnAdicionar" click="navState('add')" icon="@Embed(source='../../../../assets/icons/user_add.png')"/>
+			<mx:Button label="Alterar" id="btnAlterar" click="getFuncinario()" icon="@Embed(source='../../../../assets/icons/application_form_edit.png')"/>
+			<mx:Button label="Excluir" id="btnExcluir" click="handlerDelete(event)" icon="@Embed(source='../../../../assets/icons/delete.png')"/>
+			<mx:Button label="Adicionar Vencimentos e Descontos" id="btnVencimentos" click="currentState='FormVencimentos'" icon="@Embed(source='../../../../assets/icons/application_go.png')"/>
+		</mx:ControlBar>
+	</mx:Panel>
+	
+	
+</mx:Canvas>

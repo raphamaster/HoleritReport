@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GraphicBorderSkin  xmlns:mx="http://www.adobe.com/2006/mxml"
+                    xmlns="http://www.degrafa.com/2007">
+
+    <mx:Script>
+        <![CDATA[
+            [Bindable]
+            private var awidth:Number=0;
+
+            [Bindable]
+            private var aheight:Number=0;
+            
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+                awidth = unscaledWidth;
+                aheight = unscaledHeight;
+                }
+                //0,0 0,8 6,4
+        ]]>
+    </mx:Script>
+
+    <fills>
+     	<LinearGradientFill  id="blueGradient" angle="90">
+	     	<GradientStop alpha="1" color="#FFF"/>
+	     	<GradientStop alpha="1" color="#FFF"/>
+	     </LinearGradientFill>
+	    <LinearGradientFill  id="greyOverGradient" angle="90">
+	     	<GradientStop alpha="1" color="#FFF"/>
+	     	<GradientStop alpha="1" color="#FFF"/>
+	     </LinearGradientFill>
+	    <LinearGradientFill  id="greyDisbaledGradient" angle="90">
+	     	<GradientStop alpha="1" color="#669933"/>
+	     	<GradientStop alpha=".8" color="#000"/>
+	     </LinearGradientFill>
+	     <SolidFill id="blackFill" color="#000"/>
+    </fills>
+    
+    <strokes>
+    	<SolidStroke id="stroke" color="#005299" weight="1" alpha="1"/>
+    	<SolidStroke id="stroke2" color="#002B68" weight="1" alpha="1"/>
+    	<SolidStroke id="stroke3" color="#999" weight="1" alpha=".5"/>
+    	<SolidStroke id="stroke4" color="#CCC" weight="1" alpha=".5"/>
+    	<SolidStroke id="stroke5" color="#000" weight="1" alpha=".6"/>
+    </strokes>
+    
+    <geometry>
+                 
+        <!--upSkin State-->        
+        <GeometryComposition state="upSkin" >
+        
+        	<RoundedRectangleComplex 	
+	    					   		fill="{greyOverGradient}" stroke="{stroke3}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />
+	    	
+	    	<Polygon data="7,1 -1,1 3,7" fill="{blackFill}" y="7" x="{awidth-13}"/>
+	  
+        </GeometryComposition>
+        
+        <!--overSkin State-->        
+        <GeometryComposition state="overSkin">
+          <RoundedRectangleComplex 	
+	    					   		fill="{greyOverGradient}" stroke="{stroke5}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" /> 
+	    							
+	    	<Polygon data="7,1 -1,1 3,7" fill="{blackFill}" y="7" x="{awidth-13}"/>
+        	
+        </GeometryComposition>
+        
+        <!--downSkin State-->        
+        <GeometryComposition state="downSkin">
+           <RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}" stroke="{stroke3}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />
+	    							
+	    	<Polygon data="7,1 -1,1 3,7" fill="{blackFill}" y="7" x="{awidth-13}"/>
+	    	 
+        </GeometryComposition>
+        
+        <!--disabledSkin State-->        
+        <GeometryComposition state="disabledSkin">
+          <RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}" stroke="{stroke3}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />
+	    							
+	    	<Polygon data="7,1 -1,1 3,7" fill="{blackFill}" y="7" x="{awidth-13}"/>						
+	    	
+        </GeometryComposition>
+        
+        
+        <GeometryComposition state="selectedSkin">
+           <RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}" stroke="{stroke3}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />   
+	    	
+	   		<Polygon data="7,1 -1,1 3,7" fill="{blackFill}" y="7" x="{awidth-13}"/>
+	    	
+        </GeometryComposition>
+        
+         <!--selectedUpSkin State-->        
+        <GeometryComposition state="selectedUpSkin">
+           <RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}" stroke="{stroke3}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />   
+	    	
+	   		<Polygon data="7,1 -1,1 3,7" fill="{blackFill}" y="7" x="{awidth-13}"/>
+	    	
+        </GeometryComposition>
+        
+        <GeometryComposition state="selectedDownSkin">
+           <RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}" stroke="{stroke3}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />   
+	    	
+	   		<Polygon data="7,1 -1,1 3,7" fill="{blackFill}" y="7" x="{awidth-13}"/>
+	    	
+        </GeometryComposition>
+        
+        
+         <!--selectedUpSkin State-->        
+        <GeometryComposition state="selectedOverSkin">
+           <RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}" stroke="{stroke3}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />  
+	    							
+	    	<Polygon data="7,1 -1,1 3,7" fill="{blackFill}" y="7" x="{awidth-13}"/>					
+	    	
+        </GeometryComposition>
+        
+       
+        
+    </geometry>
+     
+   
+</GraphicBorderSkin>

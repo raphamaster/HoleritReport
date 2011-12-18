@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" styleName="greyBillPayBox" 
+		   verticalScrollPolicy="off" horizontalScrollPolicy="off" xmlns:components="br.com.raphamaster.components.*" creationComplete="init()">
+		
+	<mx:Script>
+		<![CDATA[
+			import br.com.raphamaster.utils.DB;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.messaging.messages.ErrorMessage;
+			import mx.validators.ValidationResult;
+			import mx.collections.ArrayCollection;
+			
+			[Bindable]
+			public var returnObj:Object;
+			
+			[Bindable]
+			public var comboData:ArrayCollection = new ArrayCollection([
+				{label:'Vencimentos', data:1},
+				{label:'Descontos', data:0}
+			]);
+						
+			private function init():void
+			{
+				//Iniciando conexão com o banco de dados
+				DB.Inicia();
+				
+				returnObj = DB.executeQuery("SELECT * FROM hr_codigos").data;
+			}
+			
+			private function addItem():void{
+				
+				var codigoValid:ValidationResultEvent = codigoValidator.validate();
+				var descValid:ValidationResultEvent = descValidator.validate();
+				var refValid:ValidationResultEvent = refValidator.validate();
+				
+				if(codigoValid.type == ValidationResultEvent.INVALID || descValid.type == ValidationResultEvent.INVALID || refValid.type == ValidationResultEvent.INVALID)
+				{
+					Alert.show("Preencha todo os campos para efeutar o cadastro!!!", "OPAAAA!!!");
+				} else {
+					
+					var sql:String = "INSERT INTO hr_codigos(codigo_id, codigo_desc, codigo_ref, codigo_tipo) VALUES("+int(txtCodigo.text)+", '"+txtDescricao.text+"', "+int(txtRef.text)+","+cbTipo.selectedItem.data+")";
+					
+					try{
+						DB.Inicia();
+						
+						DB.executeQuery(sql);
+						
+						txtCodigo.text		= '';
+						txtDescricao.text	= '';
+						txtRef.text			= '';
+						
+						//Atualizando Datagrid
+						init();
+						
+					} catch(e:ErrorMessage) {
+						Alert.show("Erro: "+e.faultString);
+					}
+				}
+			}
+			
+			private function updateItem():void
+			{
+				var sql:String = "UPDATE hr_codigos SET codigo_id="+int(txtCodigo.text)+", codigo_desc='"+txtDescricao.text+"', codigo_ref="+int(txtRef.text)+", codigo_tipo="+int(cbTipo.selectedItem.data)+" WHERE codigo_id="+int(dgCodigos.selectedItem.codigo_id);				
+				
+				try{
+					DB.Inicia();
+					
+					DB.executeQuery(sql);
+					
+					//Atualizando Datagrid
+					init();
+					
+					Alert.show('Codigo Alterado com Sucesso!');
+					
+				} catch(e:ErrorMessage) {
+					Alert.show("Erro: "+e.faultString);
+				}
+			}
+			
+			
+			private function changeItem():void
+			{
+								
+			}
+				
+		]]>
+	</mx:Script>
+	
+	<mx:StringValidator id="codigoValidator" source="{txtCodigo}" property="text" requiredFieldError="Preencha o campo" />
+	<mx:StringValidator id="descValidator" source="{txtDescricao}" property="text" requiredFieldError="Preencha o campo" />
+	<mx:StringValidator id="refValidator" source="{txtRef}" property="text" requiredFieldError="Preencha o campo" />
+	
+	<mx:Panel y="10" height="404" layout="absolute" title="Sobre o HoleritReport" left="10" right="10">
+		
+		<mx:Form x="10" y="160" width="471">
+			<mx:FormItem label="Tipo">
+				<mx:ComboBox id="cbTipo" dataProvider="{comboData}" labelField="label"></mx:ComboBox>
+			</mx:FormItem>
+			<mx:FormItem label="Código">
+				<mx:TextInput id="txtCodigo" text="{dgCodigos.selectedItem.codigo_id}" />
+			</mx:FormItem>
+			<mx:FormItem label="Descrição">
+				<mx:TextInput id="txtDescricao" text="{dgCodigos.selectedItem.codigo_desc}" />
+			</mx:FormItem>
+			<mx:FormItem label="Referência">
+				<mx:TextInput id="txtRef" text="{dgCodigos.selectedItem.codigo_ref}" />
+			</mx:FormItem>			
+		</mx:Form>
+		
+		<mx:DataGrid x="10" y="10" width="471" dataProvider="{returnObj}" id="dgCodigos">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Código" dataField="codigo_id" width="50"/>
+				<mx:DataGridColumn headerText="Descrição" dataField="codigo_desc" width="350"/>
+				<mx:DataGridColumn headerText="Referência" dataField="codigo_ref" width="100"/>
+			</mx:columns>
+		</mx:DataGrid>
+		
+		<mx:ControlBar>
+			<mx:Button label="Adicionar"  icon="@Embed(source='../../../../assets/icons/add.png')" click="addItem()"/>
+			<mx:Button label="Alterar" icon="@Embed(source='../../../../assets/icons/application_form_edit.png')" click="updateItem()"/>
+		</mx:ControlBar>
+		
+	</mx:Panel>
+	
+</mx:Canvas>

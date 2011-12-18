@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" styleName="greyBillPayBox" 
+		   verticalScrollPolicy="off" horizontalScrollPolicy="off" xmlns:components="br.com.raphamaster.components.*"
+		   >
+	
+	<mx:Panel y="10" height="404" layout="absolute" title="Cadastro de Códigos" left="10" right="10">
+		<mx:ControlBar>
+		
+		</mx:ControlBar>
+		
+	</mx:Panel>
+	
+</mx:Canvas>

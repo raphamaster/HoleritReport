@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" styleName="greyBillPayBox" 
+		   verticalScrollPolicy="off" horizontalScrollPolicy="off" xmlns:components="br.com.raphamaster.components.*"
+		   creationComplete="getFuncionarios()" >
+
+	<mx:Script>
+		<![CDATA[
+			import br.com.raphamaster.reports.custom.PreviewWindow;
+			import br.com.raphamaster.reports.dataproviders.DPTemplateHolerit;
+			import br.com.raphamaster.reports.templates.TemplatePadrao;
+			import br.com.raphamaster.utils.DB;
+			import br.com.raphamaster.utils.Layouts;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.RichTextEditor;
+			import mx.managers.PopUpManager;
+			import mx.utils.ArrayUtil;
+			
+			import org.doc.Document;
+			import org.doc.PaperFormat;
+				
+			[Bindable]
+			public var returnListFuncionarios:Object;
+			
+			[Bindable]
+			public var dpFuncionarios:Object;
+			
+			[Bindable]
+			public var returnDataFuncionarios:Object;
+			
+			[Bindable]
+			public var mesReferencia:ArrayCollection = new ArrayCollection([
+				{label:'Janeiro', 	data:1},
+				{label:'Fevereiro', data:2},
+				{label:'Março', 	data:3},
+				{label:'Abril', 	data:4},
+				{label:'Maio', 		data:5},
+				{label:'Junho', 	data:6},
+				{label:'Julho', 	data:7},
+				{label:'Agosto', 	data:8},
+				{label:'Setembro', 	data:9},
+				{label:'Outubro', 	data:10},
+				{label:'Novembro', 	data:11},
+				{label:'Dezembro', 	data:12}
+			]);
+			
+			
+			public function getFuncionarios():void
+			{
+				//Iniciando conexão com o banco de dados
+				DB.Inicia();
+				
+				returnListFuncionarios = DB.executeQuery("SELECT funcionario_id, funcionario_nome FROM hr_funcionarios").data;
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Gerando Preview dos Holerits gerados
+			//
+			//--------------------------------------------------------------------------
+			private function getPreviewHolerit():void
+			{
+				if(listFuncionarios.selectedItem == null){
+					Alert.show("Selecione um funcionário para impressão do holerit", "Aviso");
+				} else {
+					var preview:PreviewWindow = new PreviewWindow();
+					preview.width = this.width;
+					preview.height = this.height;
+					
+					gerarHolerit(listFuncionarios.selectedItem.funcionario_id);
+					
+					if(returnDataFuncionarios == null)
+					{
+						Alert.show("Não existe vencimentos para este funcionário");
+					} else {
+					
+						var dp:DPTemplateHolerit = new DPTemplateHolerit();
+						
+						dp.funcionario_id 		= returnDataFuncionarios[0].funcionario_id;
+						dp.funcionario_nome 	= returnDataFuncionarios[0].funcionario_nome;
+						dp.funcionario_cbo 		= returnDataFuncionarios[0].funcionario_cbo;
+						dp.funcionario_depto 	= returnDataFuncionarios[0].funcionario_depto;
+						dp.funcionario_setor	= returnDataFuncionarios[0].funcionario_setor;
+						dp.funcionario_cargo	= returnDataFuncionarios[0].funcionario_cargo;
+						dp.funcionario_empresa	= returnDataFuncionarios[0].conf_razao;
+						dp.funcionario_endereco	= returnDataFuncionarios[0].conf_endereco;
+						dp.funcionario_cnpj		= returnDataFuncionarios[0].conf_cnpj;
+						dp.funcionario_salario	= returnDataFuncionarios[0].dem_vencimento;
+						dp.mes_referencia		= cbMesReferencia.selectedItem.label;
+						
+						dp.tabela 				= returnDataFuncionarios;
+						
+						var doc:Document = new Document(new TemplatePadrao(), dp, PaperFormat.A4);
+						
+						PopUpManager.addPopUp(preview, this, true);
+						
+						Layouts.centralizarTela(preview);
+						
+						preview.preview.doc = doc;
+					}
+				}
+				
+			}
+			
+			private function gerarHolerit(id_func:int):void
+			{
+				DB.Inicia();
+				
+				var sql:String = "SELECT * FROM hr_demonstrativo";
+				sql += " INNER JOIN hr_funcionarios ON hr_demonstrativo.funcionario_id = hr_funcionarios.funcionario_id";
+				sql += " INNER JOIN hr_codigos ON hr_codigos.codigo_id = hr_demonstrativo.codigo_id";
+				sql += " INNER JOIN hr_configuracoes ON hr_configuracoes.conf_id = hr_funcionarios.conf_id";
+				sql += " WHERE hr_funcionarios.funcionario_id="+id_func;
+											
+				returnDataFuncionarios = DB.executeQuery(sql).data;
+				
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Panel y="10" height="443" layout="absolute" title="Impressão de Holerits" left="10" right="10">
+		<mx:List id="listFuncionarios" dataProvider="{returnListFuncionarios}" y="36" height="197" width="500"
+				 labelField="funcionario_nome" left="10"/>
+		<mx:Label x="10" y="10" text="Selecione o funcionário para impresão do Holerit"/>
+		<mx:Label x="10" y="258" text="Selecione o mês de referência:"/>
+		<mx:ComboBox x="197" y="256" dataProvider="{mesReferencia}" width="125" id="cbMesReferencia"></mx:ComboBox>
+		<mx:Button x="470" y="256" id="btnRefresh" icon="@Embed(source='../../../../assets/icons/arrow_refresh.png')" click="getFuncionarios()"/>
+		<!--
+		<components:ListToList left="10" right="10" top="10" bottom="10" id="listFuncionarios"
+							   leftDataProvider="{returnListFuncionarios}" leftLabelField="funcionario_nome"
+							   moveType="both" clickingAllowed="true" rightLabelField="funcionario_nome"
+							   leftLabel="Lista de Funcionarios" rightLabel="Funcionarios Selecionados"
+							   leftButtonLabel="Mover Todos" rightButtonLabel="Voltar Todos">
+		</components:ListToList>
+		-->
+		<mx:ControlBar>
+			<mx:Button label="Imprimir Holerit" click="getPreviewHolerit()" icon="@Embed(source='../../../../assets/icons/report.png')"/>		
+		</mx:ControlBar>
+		
+	</mx:Panel>
+	
+	
+	
+</mx:Canvas>

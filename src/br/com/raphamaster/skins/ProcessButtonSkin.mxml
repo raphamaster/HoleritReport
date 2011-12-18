@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GraphicBorderSkin  xmlns:mx="http://www.adobe.com/2006/mxml"
+                    xmlns="http://www.degrafa.com/2007">
+
+    <mx:Script>
+        <![CDATA[
+            [Bindable]
+            private var awidth:Number=0;
+
+            [Bindable]
+            private var aheight:Number=0;
+            
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+                awidth = unscaledWidth;
+                aheight = unscaledHeight;
+                }
+        ]]>
+    </mx:Script>
+
+    <fills>
+     	<LinearGradientFill  id="blueGradient" angle="90">
+	     	<GradientStop alpha="1" color="#005299"/>
+	     	<GradientStop alpha="1" color="#005299"/>
+	     </LinearGradientFill>
+	    <LinearGradientFill  id="greyOverGradient" angle="90">
+	     	<GradientStop alpha=".2" color="#000"/>
+	     	<GradientStop alpha=".2" color="#000"/>
+	     </LinearGradientFill>
+	    <LinearGradientFill  id="greyDisbaledGradient" angle="90">
+	     	<GradientStop alpha=".3" color="#FFF"/>
+	     	<GradientStop alpha=".3" color="#FFF"/>
+	     </LinearGradientFill>
+	     <LinearGradientFill  id="greyDisbaledSelectedGradient" angle="90">
+	     	<GradientStop alpha="1" color="#FFF"/>
+	     	<GradientStop alpha="1" color="#FFF"/>
+	     </LinearGradientFill>
+	     
+    </fills>
+    
+    <strokes>
+    	<SolidStroke id="stroke" color="#005299" weight="1" alpha="1"/>
+    	<SolidStroke id="stroke2" color="#002B68" weight="1" alpha="1"/>
+    	
+    	<SolidStroke id="stroke3" color="#999" weight="1" alpha=".5"/>
+    	<SolidStroke id="stroke4" color="#CCC" weight="1" alpha=".5"/>
+    </strokes>
+    
+    <geometry>
+                 
+        <!--upSkin State-->        
+        <GeometryComposition state="upSkin" >
+        
+        	<!--<RoundedRectangleComplex 	
+	    					   		fill="{greyOverGradient}" stroke="{stroke3}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />  -->
+	  
+        </GeometryComposition>
+        
+        <!--overSkin State-->        
+        <GeometryComposition state="overSkin">
+          <!--<RoundedRectangleComplex 	
+	    					   		fill="{greyOverGradient}" stroke="{stroke3}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" /> -->
+	    							
+	    	
+        	
+        </GeometryComposition>
+        
+        <!--downSkin State-->        
+        <GeometryComposition state="downSkin">
+           <!--<RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />-->
+	    	 
+        </GeometryComposition>
+        
+        <!--disabledSkin State-->        
+        <GeometryComposition state="disabledSkin">
+          <RoundedRectangleComplex 	
+	    					   		fill="{greyDisbaledGradient}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />
+	    							
+	    	
+        </GeometryComposition>
+        
+        <!--disabledSkin State-->        
+        <GeometryComposition state="selectedDisabledSkin">
+          <RoundedRectangleComplex 	
+	    					   		fill="{greyDisbaledSelectedGradient}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />
+	    							
+	    	
+        </GeometryComposition>
+        
+         <!--selectedUpSkin State-->        
+        <GeometryComposition state="selectedUpSkin">
+           <RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />   
+	    	
+	   
+	    	
+        </GeometryComposition>
+        
+        <GeometryComposition state="selectedDownSkin">
+           <RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />   
+	    	
+        </GeometryComposition>
+        
+        
+         <!--selectedUpSkin State-->        
+        <GeometryComposition state="selectedOverSkin">
+           <RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}"
+	    							width="{awidth}" height="{aheight}" 
+	    							bottomLeftRadius="3" 
+	    							bottomRightRadius="3"
+	    							topLeftRadius="3" 
+	    							topRightRadius="3" />  
+	    	
+        </GeometryComposition>
+        
+        
+    </geometry>
+    
+    <filters> 
+		     <flash.filters:GlowFilter id='glowFilter'  xmlns:flash.filters='flash.filters.*' 
+	          blurX='10' blurY='10'
+	          alpha='0.30' color='#000' 
+	          knockout='false' quality='1'
+	          strength='1' inner='false'/>
+		</filters>   
+     
+   
+</GraphicBorderSkin>

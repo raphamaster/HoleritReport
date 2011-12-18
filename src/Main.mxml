@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:view="br.com.raphamaster.view.*" 
+						creationComplete="init()" showFlexChrome="false">
+
+	<mx:Style source="assets/css/Globals.css"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import flash.net.navigateToURL;
+			
+			import mx.core.Application;
+			import mx.events.ItemClickEvent;
+			
+			private function init():void
+			{
+				//Iniciando a aplicacao maximizada
+				Application.application.maximize();
+				Application.application.addEventListener(MouseEvent.MOUSE_DOWN, moveIt);
+			}
+			
+			private function moveIt(e:MouseEvent):void
+			{
+				stage.nativeWindow.startMove();
+			}
+			
+			private function closeWindow():void
+			{
+				stage.nativeWindow.close();
+			}
+			
+			private var isMax:Boolean = false;
+			
+			private function minimizeWindow():void
+			{
+				stage.nativeWindow.minimize();
+			}
+									
+
+			protected function redirectToSite(event:MouseEvent):void
+			{
+				var url:URLRequest = new URLRequest("http://www.raphamaster.com.br/holeritreport");
+				navigateToURL(url);
+			}
+
+		]]>
+	</mx:Script>
+	
+	<mx:Canvas 	id="rightHolder" height="100%" width="100%" styleName="greyBox">
+					
+		<mx:Canvas height="100%" width="100%" right="5" left="5" bottom="5"	top="5" verticalScrollPolicy="auto" horizontalScrollPolicy="off" styleName="billPayHolder">
+					
+			<mx:Canvas width="100%" height="39" styleName="blueHeaderBox"/>
+				
+				<mx:HBox width="100%" height="39" verticalAlign="middle" paddingRight="10" paddingLeft="10">
+					<mx:Label text="HoleritReport" styleName="whiteText" fontSize="16" fontWeight="bold" left="10" top="10"/>
+					<mx:Spacer width="100%"/>	
+					<mx:Image source="assets/icons/minimize_icon.png" click="minimizeWindow()"/>
+					<mx:Image source="assets/icons/close_icon.png" click="closeWindow()"/>
+				</mx:HBox>
+					
+				<mx:ViewStack id="bpVS" top="69" left="180.5" width="100%" height="100%" resizeEffect="Resize" moveEffect="Move" showEffect="Fade" hideEffect="Fade">
+					
+					<view:EditFuncionarios label="Funcionarios" />
+					<view:EditReport label="Holerit" />
+					<view:EditCodigos label="Codigos" />
+					<view:EditConfiguracoes label="Configuracoes" />
+				</mx:ViewStack>
+				
+				<mx:VBox id="vbTB" top="69" verticalGap="0">
+					<mx:ToggleButtonBar	id="billpayTB" direction="vertical"	dataProvider="{bpVS}" width="180" useHandCursor="true" 
+										buttonMode="true" styleName="billPayContentItem" resizeEffect="Resize" moveEffect="Move" 
+										showEffect="Fade" hideEffect="Fade">
+					</mx:ToggleButtonBar>
+				</mx:VBox>
+				
+				
+				<mx:HRule width="100%" strokeWidth="1" strokeColor="0xCCCCCC" top="69"/>
+					
+					<mx:HBox id="gridHeader" width="100%" height="30" top="39" verticalAlign="middle" paddingLeft="10" styleName="billPaySubHeaderBox">
+						<mx:Label text="Opções" styleName="darkGreyText" fontSize="12" fontWeight="bold" width="162"/>
+						<mx:VRule height="100%" strokeWidth="1"/>
+					</mx:HBox>
+					<mx:Image x="29" source="assets/icons/logo_ra.png" bottom="30"/>
+					
+			<mx:LinkButton label="HoleritReport by Raphamaster" bottom="5" fontSize="9" click="redirectToSite(event)"/>
+					
+			</mx:Canvas>
+			
+		</mx:Canvas>
+	
+</mx:WindowedApplication>

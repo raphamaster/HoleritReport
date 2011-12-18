@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="org.print.*" xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:ns1="br.com.raphamaster.reports.components.*" 
+	width="100%" height="750" autoLayout="true">
+	
+	<mx:Script>
+		<![CDATA[
+			import br.com.raphamaster.reports.dataproviders.DPTemplateHolerit;
+			import br.com.raphamaster.utils.DB;
+			import br.com.raphamaster.utils.FormataValores;
+			
+			import mx.formatters.DateFormatter;
+			
+			private static const DataAtual:Date = new Date();
+						
+			[Bindable]
+			public var getMonth:Date = new Date
+				
+			public var formatter:FormataValores = new FormataValores();	
+			
+			
+			override public function loadData():void
+			{
+				
+				txtCodigo.text 	 = DPTemplateHolerit(this.dataProvider).funcionario_id;
+				txtNome.text 	 = DPTemplateHolerit(this.dataProvider).funcionario_nome;
+				txtCBO.text		 = DPTemplateHolerit(this.dataProvider).funcionario_cbo;
+				txtDepto.text	 = DPTemplateHolerit(this.dataProvider).funcionario_depto;
+				txtSetor.text	 = DPTemplateHolerit(this.dataProvider).funcionario_setor;
+				txtCargo.text	 = DPTemplateHolerit(this.dataProvider).funcionario_cargo;
+				txtEmpresa.text  = DPTemplateHolerit(this.dataProvider).funcionario_empresa;
+				txtEndereco.text = DPTemplateHolerit(this.dataProvider).funcionario_endereco;
+				txtCNPJ.text	 = DPTemplateHolerit(this.dataProvider).funcionario_cnpj;
+				txtMes.text		 = DPTemplateHolerit(this.dataProvider).mes_referencia+" / "+getMonth.getFullYear().toString();
+				
+				this.dgReport.dataProvider  = DPTemplateHolerit(this.dataProvider).tabela;
+				
+				//getMesAtual(getMonth.getMonth()+1); 
+				
+				totalVencimentos();
+				totalDescontos();
+				calculaLiquido();
+				calculaFGTS();
+				
+				txtSalarioBase.text = DPTemplateHolerit(this.dataProvider).funcionario_salario;
+				txtContrINSS.text 	= DPTemplateHolerit(this.dataProvider).funcionario_salario;
+				txtBaseCalc.text 	= DPTemplateHolerit(this.dataProvider).funcionario_salario;
+				txtIRRF.text = "0,00";
+			}
+			
+			private function totalVencimentos():void
+			{
+				//somando valores do datagrid
+				var totalVencimentos:Number = 0;
+				
+				for(var i:int=0; i<dgReport.dataProvider.length; i++)
+				{
+					totalVencimentos += formatter.strToFloat(dgReport.dataProvider.getItemAt(i).dem_vencimento);
+				}
+				
+				txtTotalVencimentos.text = formatter.floatToStr(totalVencimentos.toString());
+			}
+			
+			private function totalDescontos():void
+			{
+				//somando valores do datagrid
+				var totalDescontos:Number = 0;
+				
+				for(var i:int=0; i<dgReport.dataProvider.length; i++)
+				{
+					totalDescontos += formatter.strToFloat(dgReport.dataProvider.getItemAt(i).dem_desconto);
+				}
+				
+				txtTotalDescontos.text = formatter.floatToStr(totalDescontos.toString());
+			}
+			
+			private function calculaLiquido():void
+			{
+				var valorVencimento:Number = formatter.strToFloat(txtTotalVencimentos.text);
+				var valorDescontos:Number = formatter.strToFloat(txtTotalDescontos.text);
+				
+				var totalLiquido:Number = valorVencimento - valorDescontos;
+				
+				txtValorLiquido.text = formatter.floatToStr(totalLiquido.toString());
+				
+			}
+			
+			private function calculaFGTS():void
+			{
+				var salario_base:Number = formatter.strToFloat(DPTemplateHolerit(this.dataProvider).funcionario_salario);
+				var fgts:Number = (salario_base / 100) * 8;
+				txtFGTS.text = formatter.floatToStr(String(fgts));
+				
+			}
+			
+			
+			private function getMesAtual(month:int):void
+			{
+				switch(month)
+				{
+					case 1: 
+						txtMes.text = "Janeiro/"+getMonth.getFullYear().toString();
+					break;
+					case 2: 
+						txtMes.text = "Fevereiro";
+					break;
+					case 3: 
+						txtMes.text = "Março";
+					break;
+					case 4: 
+						txtMes.text = "Abril";
+					break;
+					case 5: 
+						txtMes.text = "Maio";
+					break;
+					case 6: 
+						txtMes.text = "Junho";
+					break;
+					case 7: 
+						txtMes.text = "Julho";
+					break;
+					case 8: 
+						txtMes.text = "Agosto/"+getMonth.getFullYear().toString();
+					break;
+					case 9: 
+						txtMes.text = "Setembro";
+					break;
+					case 10: 
+						txtMes.text = "Outubro";
+					break;
+					case 11: 
+						txtMes.text = "Novembro";
+					break;
+					case 12: 
+						txtMes.text = "Dezembo";
+					break;
+				}
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Style>
+		.titulo-campos{fontSize:12; fontWeight:bold; fontFamily:Arial;}
+	    /*Grid{horizontal-gap:-1; vertical-gap:-1;}
+		GridItem{border-color:#000000; border-style:solid; border-thickness:1;}
+		*/
+		.gap{horizontal-gap:-1; vertical-gap:-1;}
+		.testeBorder{border-color:#000000; border-style:solid; border-thickness:1;}
+	</mx:Style>
+	
+	<mx:DateFormatter id="DateFormatter" formatString="DD/MM/YYYY" />
+	<mx:CurrencyFormatter id="MoedaFormatterDB" precision="2" currencySymbol="R$ " decimalSeparatorTo="," 
+						  decimalSeparatorFrom="." thousandsSeparatorTo="." />
+	
+	<Body width="100%" height="667">
+		<mx:Canvas width="100%" height="100" borderStyle="solid" borderColor="#000000">
+			<mx:Label y="8" text="Empresa:" styleName="titulo-campos" left="5"/>
+			<mx:Label y="39" text="Endereço:"  styleName="titulo-campos" left="5"/>
+			<mx:Label y="67" text="CNPJ:" styleName="titulo-campos" width="39" left="5"/>
+			<mx:Label text="Recibo de Pagamento de Salário" fontSize="12" fontFamily="Arial" fontWeight="bold" right="10" width="199" y="8"/>
+			<mx:Label y="69" text="Mês de Referência:" height="19" styleName="titulo-campos" right="95" width="114"/>
+			<mx:Text y="7" id="txtEmpresa" width="350" fontWeight="bold" left="67"/>
+			<mx:Text y="39" id="txtEndereco" width="350" fontWeight="bold" left="67"/>
+			<mx:Text y="68" id="txtCNPJ" width="226" fontWeight="bold" left="67"/>
+			<mx:Text y="68" id="txtMes" fontWeight="bold" right="44" width="76"/>
+		</mx:Canvas>
+		
+		<mx:Spacer height="10" width="100%"/>
+		
+		<mx:Canvas width="100%" height="70" borderStyle="solid" borderColor="#000000" textAlign="left">
+			<mx:Grid top="5" height="100%" right="0" left="0" styleName="gap">
+				<mx:GridRow width="100%" height="15">
+					<mx:GridItem height="100%">
+						<mx:Label y="2" text="Código" left="5" styleName="titulo-campos"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Label y="0" text="Nome" styleName="titulo-campos" right="176"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%" textAlign="center">
+						<mx:Label y="0" text="CBO" styleName="titulo-campos" right="176" width="100%"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%" textAlign="center">
+						<mx:Label y="0" text="Depto." styleName="titulo-campos" right="99" width="100%"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Label y="0" text="Setor" styleName="titulo-campos" right="30" textAlign="center" width="100%"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow width="100%" height="23">
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text y="20" fontSize="10" id="txtCodigo" fontWeight="bold" textAlign="left" width="100%" x="5"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text fontWeight="bold" id="txtNome" width="250" y="20" left="98"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text y="20" fontWeight="bold" id="txtCBO" width="100%" right="164" textAlign="center"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text y="20" fontWeight="bold" textAlign="center" id="txtDepto" width="100%" right="99"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text y="20" fontWeight="bold" textAlign="center" width="100%" id="txtSetor" right="30"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow width="100%" height="23">
+					<mx:GridItem width="100%" height="100%">
+						<mx:Label y="57" text="Função:" styleName="titulo-campos" left="5"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%" colSpan="5">
+						<mx:Text x="53" y="56" id="txtCargo" width="100%" fontWeight="bold"/>
+					</mx:GridItem>
+				</mx:GridRow>
+			</mx:Grid>
+			
+			<!--
+			<mx:Label y="2" text="Código" left="5" styleName="titulo-campos"/>
+			<mx:Label y="2" text="Funcionário" styleName="titulo-campos" right="509" left="98"/>
+			<mx:Label y="0" text="CBO" styleName="titulo-campos" right="176"/>
+			<mx:Label y="0" text="Depto." styleName="titulo-campos" right="99"/>
+			<mx:Label y="0" text="Setor" styleName="titulo-campos" right="30"/>
+			<mx:Label y="57" text="Função:" styleName="titulo-campos" left="5"/>
+			<mx:Text y="20" fontSize="10" id="txtCodigo" fontWeight="bold" textAlign="center" width="44" x="5"/>
+			<mx:Text fontWeight="bold" id="txtNome" width="330" y="20" left="98"/>
+			<mx:Text y="20" fontWeight="bold" id="txtCBO" width="42" right="164" textAlign="left"/>
+			<mx:Text y="20" fontWeight="bold" textAlign="center" id="txtDepto" width="41" right="99"/>
+			<mx:Text y="20" fontWeight="bold" textAlign="center" width="36" id="txtSetor" right="30"/>
+			<mx:Text x="53" y="56" id="txtCargo" width="375" fontWeight="bold"/>
+			-->
+		</mx:Canvas>
+		
+		<mx:Spacer height="10" width="100%"/>
+		
+		<mx:Canvas width="100%" height="172" borderStyle="solid" borderColor="#000000">
+			
+			<ReportDataGrid id="dgReport" width="100%" height="172" horizontalGridLines="false">
+				<columns>
+					<mx:DataGridColumn headerText="Cód." dataField="codigo_id" width="50" textAlign="center"/>
+					<mx:DataGridColumn headerText="Descrição" dataField="codigo_desc" width="300"/>
+					<mx:DataGridColumn headerText="Ref." dataField="codigo_ref" width="50" textAlign="center"/>
+					<mx:DataGridColumn headerText="Vencimentos" dataField="dem_vencimento" width="100" textAlign="right"/>
+					<mx:DataGridColumn headerText="Descontos" dataField="dem_desconto" width="100" textAlign="right"/>
+				</columns>
+			</ReportDataGrid>
+			
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="80" borderColor="#000000" borderStyle="solid">
+			<mx:Canvas y="0" height="100%" right="0" width="236" borderColor="#000000" borderStyle="solid">
+				<mx:Grid x="0" y="0" width="100%" height="100%" borderColor="#000000" styleName="gap">
+					<mx:GridRow width="100%" height="20">
+						<mx:GridItem width="100%" height="100%">
+							<mx:Label text="Total Vencimentos" styleName="titulo-campos"/>
+						</mx:GridItem>
+						<mx:GridItem width="100%" height="100%">
+							<mx:Label text="Total Descontos" styleName="titulo-campos"/>
+						</mx:GridItem>
+					</mx:GridRow>
+					<mx:GridRow width="100%" height="20">
+						<mx:GridItem width="100%" height="100%">
+							<mx:Text id="txtTotalVencimentos" fontWeight="bold" textAlign="center"/>
+						</mx:GridItem>
+						<mx:GridItem width="100%" height="100%">
+							<mx:Text id="txtTotalDescontos" fontWeight="bold"/>
+						</mx:GridItem>
+					</mx:GridRow>
+					<mx:GridRow width="100%" height="100%">
+						<mx:GridItem width="100%" height="100%" verticalAlign="middle" textAlign="center" colSpan="2" styleName="testeBorder">
+							<mx:Label text="Valor Liquido:" textAlign="center" fontWeight="bold" styleName="titulo-campos"/>
+							<mx:Text id="txtValorLiquido" fontWeight="bold" fontSize="12"/>
+						</mx:GridItem>
+						<!--
+						<mx:GridItem width="100%" height="100%">
+							
+						</mx:GridItem>
+						-->
+					</mx:GridRow>
+				</mx:Grid>
+			</mx:Canvas>
+		</mx:Canvas>
+		<mx:Canvas width="100%" height="73" borderStyle="solid" borderColor="#000000">
+			<mx:Grid top="5" height="100%" right="0" left="0" styleName="gap">
+				<mx:GridRow width="100%" height="23">
+					<mx:GridItem width="100%" height="100%">
+						<mx:Label text="Salário Base" styleName="titulo-campos" textAlign="center" width="100%"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Label text="Sal. Contr. INSS" styleName="titulo-campos" width="100%" textAlign="center"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Label text="Base Calc. FGTS" styleName="titulo-campos" width="100%" textAlign="center"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Label text="FGTS do Mês" styleName="titulo-campos" width="100%" textAlign="center"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Label text="Base Calc. IRRF" styleName="titulo-campos" width="100%" textAlign="center"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Label text="Faixa IRRF" styleName="titulo-campos" width="100%" textAlign="center"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow width="100%" height="25">
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text id="txtSalarioBase" fontWeight="bold" styleName="titulo-campos" width="100%" textAlign="center"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text id="txtContrINSS" textAlign="center" styleName="titulo-campos" width="100%" fontWeight="bold"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text text="8%" styleName="titulo-campos" textAlign="center" width="100%" fontWeight="bold"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text id="txtFGTS" styleName="titulo-campos" width="100%" textAlign="center" fontWeight="bold"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text id="txtBaseCalc" styleName="titulo-campos" width="100%" textAlign="center" fontWeight="bold"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%" height="100%">
+						<mx:Text id="txtIRRF" width="100%" styleName="titulo-campos" textAlign="center" fontWeight="bold"/>
+					</mx:GridItem>
+				</mx:GridRow>
+			</mx:Grid>
+		</mx:Canvas>
+		<mx:Spacer height="20" width="100%"/>
+		<mx:Canvas width="100%" height="87" borderStyle="solid" borderColor="#000000">
+			<mx:Label text="DECLARO TER RECEBIDO A IMPORTÂNCIA LIQUIDA DISCRIMINADA NESTE RECIBO" styleName="titulo-campos" right="106.5" top="5" left="106.5" horizontalCenter="0"/>
+			<mx:HRule y="52" width="200" right="48" strokeColor="#000000"/>
+			<mx:Label y="55" text="ASSINATURA DO FUNCIONARIO" styleName="titulo-campos" right="70"/>
+			<mx:Label y="34" text="_____/_____/_____" styleName="titulo-campos" fontSize="16" fontWeight="normal" width="157" left="50"/>
+		</mx:Canvas>
+	</Body>
+	
+</Report>

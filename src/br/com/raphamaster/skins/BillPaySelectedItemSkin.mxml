@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GraphicBorderSkin  xmlns:mx="http://www.adobe.com/2006/mxml"
+                    xmlns="http://www.degrafa.com/2007">
+
+    <mx:Script>
+        <![CDATA[
+            [Bindable]
+            private var awidth:Number=0;
+
+            [Bindable]
+            private var aheight:Number=0;
+            
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+                awidth = unscaledWidth;
+                aheight = unscaledHeight;
+                }
+        ]]>
+    </mx:Script>
+
+    <fills>
+     	<LinearGradientFill  id="blueGradient" angle="90">
+	     	<GradientStop alpha="1" color="#EFEFEF"/>
+	     	<GradientStop alpha="1" color="#EFEFEF"/>
+	     </LinearGradientFill>
+	    <LinearGradientFill  id="greyOverGradient" angle="90">
+	     	<GradientStop alpha="1" color="#FFF"/>
+	     	<GradientStop alpha="1" color="#ECECEC"/>
+	     </LinearGradientFill>
+	    <LinearGradientFill  id="greyDisbaledGradient" angle="90">
+	     	<GradientStop alpha="1" color="#FFF"/>
+	     	<GradientStop alpha="1" color="#ECECEC"/>
+	     </LinearGradientFill>
+	     
+    </fills>
+    
+    <strokes>
+    	<SolidStroke id="stroke" color="#005299" weight="1" alpha="1"/>
+    	<SolidStroke id="stroke2" color="#002B68" weight="1" alpha="1"/>
+    	
+    	<SolidStroke id="stroke3" color="#999" weight="1" alpha=".5"/>
+    	<SolidStroke id="stroke4" color="#CCC" weight="1" alpha=".5"/>
+    </strokes>
+    
+    <geometry>
+     
+        	<RoundedRectangleComplex 	
+	    					   		fill="{blueGradient}" 
+	    							width="{awidth+2}" height="{aheight}" 
+	    							bottomLeftRadius="0" 
+	    							bottomRightRadius="0"
+	    							topLeftRadius="0" 
+	    							topRightRadius="0" /> 
+	    							
+						  
+      <HorizontalLine x="0" x1="{awidth}" y="0" stroke="{stroke3}"/>
+      <HorizontalLine x="0" x1="{awidth}" y="{aheight}" stroke="{stroke3}"/>
+      
+       
+        
+    </geometry>
+    
+  
+</GraphicBorderSkin>

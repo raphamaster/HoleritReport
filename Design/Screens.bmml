@@ -1,0 +1,36 @@
+<mockup version="1.0" skin="sketch" measuredW="999" measuredH="436" mockupW="808" mockupH="395">
+  <controls>
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::VerticalTabBar" x="181" y="31" w="808" h="395" measuredW="200" measuredH="209" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <position>left</position>
+        <selectedIndex>0</selectedIndex>
+        <text>Funcion%E1rios%0ADescontos%0AVencimentos%0AImpress%F5es%0AConfigura%E7%F5es</text>
+      </controlProperties>
+    </control>
+    <control controlID="1" controlTypeID="com.balsamiq.mockups::SearchBox" x="287" y="56" w="676" h="-1" measuredW="76" measuredH="25" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Pesquisa</text>
+      </controlProperties>
+    </control>
+    <control controlID="2" controlTypeID="com.balsamiq.mockups::DataGrid" x="292" y="94" w="671" h="221" measuredW="334" measuredH="86" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cod.%2C%20Nome%2C%20Cargo%2C%0A1%2C%20Raphael%20Franco%2C%20Professor%20de%20Inform%E1tica%0A2%2C%20Roselandia%20Dias%2C%20Aux.%20Administrativo</text>
+      </controlProperties>
+    </control>
+    <control controlID="3" controlTypeID="com.balsamiq.mockups::Button" x="293" y="319" w="-1" h="-1" measuredW="77" measuredH="28" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Adicionar</text>
+      </controlProperties>
+    </control>
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::Button" x="385" y="319" w="-1" h="-1" measuredW="68" measuredH="28" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Alterar</text>
+      </controlProperties>
+    </control>
+    <control controlID="5" controlTypeID="com.balsamiq.mockups::Button" x="468" y="319" w="-1" h="-1" measuredW="64" measuredH="28" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Excluir</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>

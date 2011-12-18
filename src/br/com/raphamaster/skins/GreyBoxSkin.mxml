@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GraphicBorderSkin  xmlns:mx="http://www.adobe.com/2006/mxml"
+                    xmlns="http://www.degrafa.com/2007">
+
+    <mx:Script>
+        <![CDATA[
+            [Bindable]
+            private var awidth:Number=0;
+
+            [Bindable]
+            private var aheight:Number=0;
+            
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+                awidth = unscaledWidth;
+                aheight = unscaledHeight;
+                }
+        ]]>
+    </mx:Script>
+
+    <fills>
+     	<LinearGradientFill  id="GreyGradient" angle="90">
+	     	<GradientStop alpha="1" color="#ECECEC"/>
+	     	<GradientStop alpha="1" color="#ECECEC"/>
+	     </LinearGradientFill>
+    </fills>
+
+  
+    <geometry>
+    
+	   
+	    
+	    <RoundedRectangleComplex 	id="roundRectangle"
+	    					   		fill="{GreyGradient}"
+	    							width="{awidth}" 
+	    							height="{aheight}" 
+	    							bottomLeftRadius="0" 
+	    							bottomRightRadius="0"
+	    							topLeftRadius="5" 
+	    							topRightRadius="5"/>
+	    							
+	 
+    </geometry> 
+    
+   
+</GraphicBorderSkin>

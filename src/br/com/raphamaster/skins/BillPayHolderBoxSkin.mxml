@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GraphicBorderSkin  xmlns:mx="http://www.adobe.com/2006/mxml"
+                    xmlns="http://www.degrafa.com/2007">
+
+    <mx:Script>
+        <![CDATA[
+            [Bindable]
+            private var awidth:Number=0;
+
+            [Bindable]
+            private var aheight:Number=0;
+            
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+                awidth = unscaledWidth;
+                aheight = unscaledHeight;
+                }
+        ]]>
+    </mx:Script>
+
+    <fills>
+     	<LinearGradientFill  id="GreyGradient" angle="90">
+	     	<GradientStop alpha="1" color="#FFF"/>
+	     	<GradientStop alpha="1" color="#E0E0E0"/>
+	     </LinearGradientFill>
+    </fills>
+
+  
+    <geometry>
+    
+	   
+	    
+	    <RoundedRectangleComplex 	id="roundRectangle"
+	    					   		fill="{GreyGradient}"
+	    							width="{awidth}" 
+	    							height="{aheight}" 
+	    							bottomLeftRadius="5" 
+	    							bottomRightRadius="5"
+	    							topLeftRadius="5" 
+	    							topRightRadius="5"/>
+	    							
+	 
+    </geometry> 
+     <filters> 
+	     <flash.filters:GlowFilter id='glowFilter'  xmlns:flash.filters='flash.filters.*' 
+          blurX='10' blurY='10'
+          alpha='0.50' color='#000' 
+          knockout='false' quality='1'
+          strength='1' inner='false'/>
+          
+         
+	</filters>
+   
+</GraphicBorderSkin>

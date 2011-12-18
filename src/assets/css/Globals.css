@@ -1,0 +1,226 @@
+/* CSS file */
+Application {
+	background-gradient-colors: #FFF, #FFF;
+	theme-color: 				#617B8D;
+	/*
+	backgroundColor: 			'';
+	background-image: 			'assets/images/background.png';
+	*/
+	padding-top: 				0;
+	padding-bottom: 			0;
+	padding-left: 				0;
+	padding-right: 				0;
+}
+
+.billPayContentItem {
+   buttonHeight: 				33;
+   buttonWidth: 				180;
+   buttonStyleName: 			"billPayBarButtonStyle";
+   selectedButtonTextStyleName: "billPayBarSelectedButtonStyle";
+}
+
+.billPayBarButtonStyle {
+   	fontFamily: 		MyriadWebPro;
+   	upSkin: 			ClassReference("br.com.raphamaster.skins.BillPayItemSkin");
+	downSkin: 			ClassReference("br.com.raphamaster.skins.BillPayDownItemSkin");
+    overSkin: 			ClassReference("br.com.raphamaster.skins.BillPayOverItemSkin");
+    disabledSkin: 		ClassReference("br.com.raphamaster.skins.BillPaySelectedItemSkin");
+    selectedUpSkin:		ClassReference("br.com.raphamaster.skins.BillPaySelectedItemSkin");
+    selectedOverSkin:	ClassReference("br.com.raphamaster.skins.BillPaySelectedItemSkin");
+    selectedDownSkin:	ClassReference("br.com.raphamaster.skins.BillPaySelectedItemSkin");
+   	color:				#000;
+   	font-size:			12;
+   	textSelectedColor: 	#005299;
+   	textRollOverColor: 	#005299;
+   	fontWeight:			'bold';
+   	textAlign:			"left";
+   
+}
+
+.greyBox
+{
+	border-skin: ClassReference("br.com.raphamaster.skins.GreyBoxSkin");
+}
+
+.billPayHolder
+{
+	border-skin: ClassReference("br.com.raphamaster.skins.BillPayHolderBoxSkin");
+}
+
+.blueHeaderBox
+{
+	border-skin: ClassReference("br.com.raphamaster.skins.BlueHeaderBox");
+}
+
+.billPayBarSelectedButtonStyle {
+   	fontFamily: 		MyriadWebPro;
+   	upSkin: 			ClassReference("br.com.raphamaster.skins.BillPayItemSkin");
+	downSkin: 			ClassReference("br.com.raphamaster.skins.BillPayItemSkin");
+    overSkin: 			ClassReference("br.com.raphamaster.skins.BillPayOverItemSkin");
+    disabledSkin: 		ClassReference("br.com.raphamaster.skins.BillPaySelectedItemSkin");
+    selectedUpSkin:		ClassReference("br.com.raphamaster.skins.BillPaySelectedItemSkin");
+    selectedOverSkin:	ClassReference("br.com.raphamaster.skins.BillPaySelectedItemSkin");
+    selectedDownSkin:	ClassReference("br.com.raphamaster.skins.BillPaySelectedItemSkin");
+   	font-size:			12;
+   	color:				#005299;
+   	fontWeight:			'bold';
+   	textAlign:			"left";
+}
+
+.billPaySubHeaderBox
+{
+	border-skin: ClassReference("br.com.raphamaster.skins.BillPaySubHeaderBox");
+}
+
+.greyBillPayBox
+{
+	border-skin: ClassReference("br.com.raphamaster.skins.BillPayGreyContentBoxSkin");
+}
+
+.setUpButton
+{
+	skin: 				ClassReference("br.com.raphamaster.skins.SetUpButton");
+	font-family: 		MyriadWebPro;
+    color:				#FFF;
+    textRollOverColor: 	#FFF;
+    textSelectedColor:	#FFF;
+    font-size:			12;
+    disabledColor:		#CCC;
+}
+
+.setUpPaymentPopup
+{
+	border-skin: ClassReference("br.com.raphamaster.skins.SetupPaymentPopupSkin");
+}
+
+.processButton 
+{
+ 	skin: 				ClassReference("br.com.raphamaster.skins.ProcessButtonSkin");
+ 	font-family: 		MyriadWebPro;
+    color:				#005DA1;
+    font-size:			10;
+    disabledColor:		#3C83B7;
+    fontWeight:			'normal';
+}
+
+.comboBox
+{
+	skin: 				ClassReference("br.com.raphamaster.skins.ComboBoxSkin");
+	fontFamily: 		MyriadWebPro;
+	font-size:			12;
+	color:				#346734;
+	fontWeight:			'normal';
+}
+
+
+/* Text Styles */
+.whiteText
+{
+	font-family: 		MyriadWebPro;
+    color:				#FFF;
+}
+
+.blackText
+{
+	font-family: 		MyriadWebPro;
+    color:				#000;
+}
+
+.greyText
+{
+	font-family: 		MyriadWebPro;
+    color:				#999;
+}
+
+.darkGreyText
+{
+	font-family: 		MyriadWebPro;
+    color:				#666;
+}
+
+.whiteLinkText
+{
+	skin:				ClassReference(null);
+	font-family: 		MyriadWebPro;
+    color:				#FFF;
+    textRollOverColor:	#FFF;
+    textSelectedColor:	#FFF;
+	fontWeight:			'normal';
+}
+
+.redText
+{
+	font-family: 		MyriadWebPro;
+    color:				#FF3300;
+}
+
+/* Embeded Fonts*/
+/* Fonts */
+@font-face {
+    src: url("/assets/fonts/MyriadWebPro.ttf") ;
+    fontFamily: MyriadWebPro;
+    unicodeRange:
+           U+0041-U+005A, /* Upper-Case [A..Z] */
+           U+0061-U+007A, /* Lower-Case a-z */
+           U+0030-U+0039, /* Numbers [0..9] */
+           U+002E-U+002E, /* Period [.] */
+           U+005F-U+005F, /* Upper-Case [A..Z] */
+           U+0021-U+0021, /* Upper-Case [A..Z] */
+           U+0023-U+0023, /* Upper-Case [A..Z] */
+           U+007B-U+007E, /* Punctuation and Symbols */
+           U+0026-U+0026, /* Punctuation and Symbols */
+           U+002F-U+002F, /* Punctuation and Symbols */
+           U+0028-U+0029, /* Punctuation and Symbols */
+           U+003F-U+003F, /* Punctuation and Symbols */
+           U+0027-U+0027, /* Punctuation and Symbols */
+           U+00B0-U+00B0, /* Punctuation and Symbols */
+           U+002D-U+002D, /* Punctuation and Symbols */
+           U+0040-U+0040, /* Punctuation and Symbols */
+           U+002A-U+002A, /* Punctuation and Symbols */
+           U+002D-U+002D, /* Punctuation and Symbols */
+           U+003A-U+003A, /* Upper-Case [A..Z] */
+           U+0023-U+0023, /* Upper-Case [A..Z] */
+           U+0332-U+0332, /* Upper-Case [A..Z] */
+           U+FE57-U+FE57, /* Upper-Case [A..Z] */
+           U+00A9-U+00A9, /* Upper-Case [A..Z] */
+           U+0024-U+0024, /* Upper-Case [A..Z] */
+           U+002C-U+002C, /* Upper-Case [A..Z] */
+           U+0082-U+0082, /* Upper-Case [A..Z] */
+           U+FF01-U+FF01; /* Upper-Case [A..Z] */
+}
+
+@font-face {
+    src: url("/assets/fonts/MyriadWebPro-Bold.ttf") ;
+    fontFamily: MyriadWebPro;
+    fontWeight: bold;
+    unicodeRange:
+           U+0041-U+005A, /* Upper-Case [A..Z] */
+           U+0061-U+007A, /* Lower-Case a-z */
+           U+0030-U+0039, /* Numbers [0..9] */
+           U+002E-U+002E, /* Period [.] */
+           U+005F-U+005F, /* Upper-Case [A..Z] */
+           U+0021-U+0021, /* Upper-Case [A..Z] */
+           U+0023-U+0023, /* Upper-Case [A..Z] */
+           U+007B-U+007E, /* Punctuation and Symbols */
+           U+0026-U+0026, /* Punctuation and Symbols */
+           U+002F-U+002F, /* Punctuation and Symbols */
+           U+0028-U+0029, /* Punctuation and Symbols */
+           U+003F-U+003F, /* Punctuation and Symbols */
+           U+0027-U+0027, /* Punctuation and Symbols */
+           U+00B0-U+00B0, /* Punctuation and Symbols */
+           U+002D-U+002D, /* Punctuation and Symbols */
+           U+0040-U+0040, /* Punctuation and Symbols */
+           U+002A-U+002A, /* Punctuation and Symbols */
+           U+002D-U+002D, /* Punctuation and Symbols */
+           U+003A-U+003A, /* Upper-Case [A..Z] */
+           U+0023-U+0023, /* Upper-Case [A..Z] */
+           U+0332-U+0332, /* Upper-Case [A..Z] */
+           U+FE57-U+FE57, /* Upper-Case [A..Z] */
+           U+00A9-U+00A9, /* Upper-Case [A..Z] */
+           U+0024-U+0024, /* Upper-Case [A..Z] */
+           U+002C-U+002C, /* Upper-Case [A..Z] */
+           U+0082-U+0082, /* Upper-Case [A..Z] */
+           U+FF01-U+FF01; /* Upper-Case [A..Z] */
+           
+}
+

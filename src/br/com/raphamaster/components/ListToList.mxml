@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="100%" height="100%"
+	minWidth="400" minHeight="300">
+	
+	<mx:Script>
+		<![CDATA[
+			
+			//===============================================
+			// Import statements
+			//===============================================
+			
+			import mx.collections.IList;
+			import mx.events.DragEvent;
+			
+			//===============================================
+			// Public vars
+			//===============================================
+			
+			 /**
+			  * The label that appears above the left list.
+			  */ 
+			 [Bindable]
+			 public var leftLabel:String = "Left List";
+			 
+			 /**
+			  * The label that appears above the right list.
+			  */
+			 [Bindable] 
+			 public var rightLabel:String = "Right List";
+			 
+			 /**
+			  * The label used for the left move all button.
+			  */ 
+			 [Bindable]
+			 public var leftButtonLabel:String = "Move All ->";
+			 
+			 /**
+			  * The label used for the right move all button.
+			  */
+			 [Bindable] 
+			 public var rightButtonLabel:String = "<- Move All";
+			 
+			 /**
+			  * The label field to use with the left List.
+			  * 
+			  * @default label
+			  */ 
+			 [Bindable]
+			 public var leftLabelField:String = "label";
+			 
+			 /**
+			  * The label field to use with the right List.
+			  * 
+			  * @default label
+			  */ 
+			 [Bindable]
+			 public var rightLabelField:String = "label";
+			 
+			 /**
+			  * Flag to show move all buttons.
+			  * 
+			  * @default true
+			  */
+			 [Bindable]
+			 public var moveAllButtonsEnabled:Boolean = true;
+			 
+			 /**
+			  * Flag to allowing multiple selections.
+			  * 
+			  * @default true
+			  */
+			 [Bindable]
+			 public var multipleSelectionsAllowed:Boolean = true;
+			 
+			 //==============================================
+			 // Private vars
+			 //==============================================
+			 
+			 /**
+			  * Flag for movement type.  
+			  * Set to true if drag and drop is enabled.
+			  * 
+			  * @default false
+			  */
+			 [Bindable]
+			 private var _draggingAllowed:Boolean = false;
+			 
+			 /**
+			  * Flag for movement type.  
+			  * Set to true if clicking is enabled.
+			  * 
+			  * @default true
+			  */ 
+			 [Bindable]
+			 private var _clickingAllowed:Boolean = true;
+			 
+			 //==============================================
+			 // Public methods
+			 //==============================================
+			 
+			 /**
+			  * Sets the movement type (i.e., clicking, dragging, both).
+			  * 
+			  * @param type The movement type
+			  */ 
+			 [Inspectable(enumeration="both,click,drag", defaultValue="both")]
+			 public function set moveType(type:String):void
+			 {
+			 	switch(type.toLowerCase())
+			 	{
+			 		case "drag":
+			 			_draggingAllowed = true;
+			 			_clickingAllowed = false;
+			 			break;
+			 		case "click":
+			 			_clickingAllowed = true;
+			 			_draggingAllowed = false;
+			 			break;
+			 		case "both":
+			 		default: // Make "click" the default behavior
+			 			_draggingAllowed = true;
+			 			_clickingAllowed = true;
+			 			break;
+			 	}
+			 }
+			 
+			 /**
+			  * Sets the data provider for the left List.
+			  * 
+			  * @param data The data for the list.
+			  */ 
+			 public function set leftDataProvider(data:Object):void
+			 {
+			 	leftList.dataProvider = data;
+			 }
+			 
+			 /**
+			  * Sets the data provider for the right List.
+			  * 
+			  * @param data The data for the list.
+			  */ 
+			 public function set rightDataProvider(data:Object):void
+			 {
+			 	rightList.dataProvider = data;
+			 }
+			 
+			 /**
+			  * Sets whether or not clicking is allowed.
+			  * 
+			  * @param value True or false.
+			  */ 
+			 [Inspectable(enumeration="true,false", defaultValue="true")]
+			 public function set clickingAllowed(value:Boolean):void
+			 {
+			 	_clickingAllowed = value;
+			 }
+
+			 /**
+			  * Sets whether or not dragging is allowed.
+			  * 
+			  * @param value True or false.
+			  */
+			 [Inspectable(enumeration="true,false", defaultValue="true")]
+			 public function set draggingAllowed(value:Boolean):void
+			 {
+			 	_draggingAllowed = value;
+			 }
+			 //==============================================
+			 // Private methods
+			 //==============================================
+			 			 
+			 
+			 
+			 /**
+			  * Moves the selected item, or items from the source list to the 
+			  * target list.
+			  * 
+			  * @param source The source list.
+			  * @param target The target list.
+			  */ 
+			 private function _moveItems(source:List, target:List):void
+			 {
+			 	var length:int = source.selectedItems.length;
+			 	for (var i:int = 0; i < length; i++)
+			 	{
+			 		IList(target.dataProvider).addItem(source.selectedItems[0]);
+			 		IList(source.dataProvider).removeItemAt(source.selectedIndices[0]);
+			 	}
+			 }
+			 
+			 private function _moveAllItems(source:List, target:List):void
+			 {
+			 	// Loop through all the items in the source List
+			 	var items:Array = new Array();
+			 	
+			 	for (var i:int = 0; i < IList(source.dataProvider).length; i++) {
+					items[i] = i;
+				}
+				
+				// Select all the items in the source List
+				source.selectedIndices = items;
+				
+				// Move the items
+				_moveItems(source, target);
+			 }
+			
+		]]>
+	</mx:Script>
+	
+	<!-- Left List -->
+	<mx:Label 
+		id="leftListLabel"
+		text="{leftLabel}" 
+		left="0" top="10"/>
+	
+	<mx:List
+		allowMultipleSelection="{multipleSelectionsAllowed}"
+		dragEnabled="{_draggingAllowed}"
+		dropEnabled="{_draggingAllowed}"
+        dragMoveEnabled="{_draggingAllowed}"
+		id="leftList" 
+		labelField="{leftLabelField}"
+		left="0" top="36" bottom="41"
+		width="46%">
+	</mx:List>
+	
+	<mx:Button 
+		click="_moveAllItems(leftList, rightList);"
+		enabled="{moveAllButtonsEnabled}"
+		id="removeAllBtn" 
+		label="{leftButtonLabel}"
+		visible="{moveAllButtonsEnabled}" 
+		left="0" bottom="10"/>
+	
+	<!-- Right List -->
+	<mx:Canvas 
+		horizontalScrollPolicy="off"
+		verticalScrollPolicy="off"
+		right="0" bottom="0" top="0" 
+		width="46%">
+		
+		<mx:Label
+			id="rightListLabel" 
+			text="{rightLabel}"
+			x="0" y="10"/>
+		
+		<mx:List 
+			allowMultipleSelection="{multipleSelectionsAllowed}"
+			dragEnabled="{_draggingAllowed}"
+			dropEnabled="{_draggingAllowed}"
+			dragMoveEnabled="{_draggingAllowed}"
+			id="rightList"
+			labelField="{rightLabelField}"
+			left="0" right="0" top="36" bottom="41">
+		</mx:List>
+		
+		<mx:Button 
+			click="_moveAllItems(rightList, leftList);"
+			enabled="{moveAllButtonsEnabled}"
+			id="addAllBtn" 
+			label="{rightButtonLabel}" 
+			visible="{moveAllButtonsEnabled}"
+			bottom="10" left="0" />
+	</mx:Canvas>
+	
+	<!-- Move Buttons -->
+	<mx:VBox 
+		id="moveButtons"
+		visible="{_clickingAllowed}" 
+		horizontalCenter="0" verticalCenter="0">
+		<mx:Button 
+			click="_moveItems(rightList, leftList);"
+			id="rightToLeftBtn"
+			label="&lt;-"/>
+		<mx:Button 
+			click="_moveItems(leftList, rightList);"
+			id="leftToRightBtn" 
+			label="-&gt;"/>
+	</mx:VBox>
+	
+</mx:Canvas>

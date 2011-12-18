@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ComboBox xmlns:mx="http://www.adobe.com/2006/mxml" dataProvider="{returnVencimentos}" labelField="codigo_desc" 
+			 creationComplete="init()">
+	
+	<mx:Script>
+		<![CDATA[
+			import br.com.raphamaster.utils.DB;
+			
+			[Bindable]
+			public var returnVencimentos:Object;
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Metodo inicial retornando todos os tipos vencimentos cadastrados
+			//
+			//--------------------------------------------------------------------------
+			private function init():void
+			{
+				//Iniciando conexão com o banco de dados
+				DB.Inicia();
+				
+				returnVencimentos = DB.executeQuery("SELECT codigo_id, codigo_desc, codigo_tipo FROM hr_codigos WHERE codigo_tipo=0").data;
+			}
+		]]>
+	</mx:Script>
+	
+</mx:ComboBox>
